@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Michael Oliphant | oliphant.dev</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Keep iOS/Safari dark (prevents white background flash) -->
+  <meta name="color-scheme" content="dark" />
+  <meta name="theme-color" content="#020617" />
+
+  <style>
+    :root {
+      --bg: #050816;
+      --card: #0b1020;
+      --accent1: #38bdf8;
+      --accent2: #8b5cf6;
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --border-soft: rgba(148, 163, 184, 0.4);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont,
+                   "Segoe UI", sans-serif;
+    }
+
+    html, body {
+      height: 100%;
+      background: #020617; /* hard override for iOS */
+    }
+
+    body {
+      min-height: 100vh;
+      background: radial-gradient(circle at top, #111827 0, #020617 60%);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .shell {
+      width: 100%;
+      max-width: 700px;
+      background: rgba(15, 23, 42, 0.9);
+      border-radius: 1.6rem;
+      padding: 2.2rem 1.8rem 2rem;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      box-shadow:
+        0 25px 60px rgba(15, 23, 42, 0.95),
+        0 0 40px rgba(56, 189, 248, 0.15);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+
+    @media (min-width: 640px) {
+      .shell {
+        padding: 2.6rem 2.4rem 2.3rem;
+      }
+    }
+
+    .circle-wrap {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 1.6rem;
+    }
+
+    .circle {
+      width: 90px;
+      height: 90px;
+      border-radius: 999px;
+      background: conic-gradient(
+        from 160deg,
+        var(--accent1),
+        var(--accent2),
+        var(--accent1)
+      );
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow:
+        0 0 25px rgba(56, 189, 248, 0.55),
+        0 0 25px rgba(139, 92, 246, 0.55);
+    }
+
+    .circle-inner {
+      width: 64px;
+      height: 64px;
+      border-radius: 999px;
+      background: radial-gradient(
+        circle at top,
+        #020617,
+        #020617 55%,
+        #020617
+      );
+      border: 1px solid rgba(15, 23, 42, 0.9);
+    }
+
+    .heading {
+      text-align: center;
+      margin-bottom: 1.6rem;
+    }
+
+    .name {
+      font-size: clamp(1.9rem, 3vw, 2.4rem);
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      margin-bottom: 0.25rem;
+    }
+
+    .subtitle {
+      font-size: 0.98rem;
+      color: var(--text-muted);
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.75rem;
+      margin-top: 2rem;
+    }
+
+    @media (max-width: 520px) {
+      .buttons {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.7rem 0.6rem;
+      font-size: 0.9rem;
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      background: rgba(15, 23, 42, 0.95);
+      color: var(--text-main);
+      text-decoration: none;
+      cursor: pointer;
+      transition:
+        transform 0.1s ease,
+        box-shadow 0.15s ease,
+        border-color 0.15s ease,
+        background 0.15s ease;
+      text-align: center;
+      white-space: nowrap;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Subtle hover — no default glow */
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 22px rgba(15, 23, 42, 0.9);
+      border-color: var(--accent1);
+    }
+
+    .footer {
+      margin-top: 1.7rem;
+      text-align: center;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    /* prevent iOS auto-link styling */
+    a {
+      text-decoration: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="shell">
+    <div class="circle-wrap">
+      <div class="circle">
+        <div class="circle-inner"></div>
+      </div>
+    </div>
+
+    <div class="heading">
+      <div class="name">Michael Oliphant</div>
+      <div class="subtitle">Cloud · Systems · IT</div>
+    </div>
+
+    <div class="buttons">
+      <a href="https://cloud.oliphant.dev"
+         class="btn"
+         target="_blank"
+         rel="noreferrer">
+        Cloud
+      </a>
+
+      <a href="https://github.com/MichaelOliphant"
+         class="btn"
+         target="_blank"
+         rel="noreferrer">
+        GitHub
+      </a>
+
+      <!-- Projects now opens the diagram directly -->
+      <a href="/files/diagram.pdf" class="btn">
+        Projects
+      </a>
+
+      <a href="https://www.linkedin.com/in/michaeloliphant1"
+         class="btn"
+         target="_blank"
+         rel="noreferrer">
+        LinkedIn
+      </a>
+
+      <a href="/files/resume.pdf" class="btn">
+        Résumé
+      </a>
+
+      <a href="mailto:michael@oliphant.dev" class="btn">
+        Email
+      </a>
+    </div>
+
+    <div class="footer">
+      Hosted on AWS · oliphant.dev
+    </div>
+  </div>
+</body>
+</html>
