@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ticket Queue</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <main class="container">
+    <h1>Ticket Queue</h1>
+    <p class="subtitle">Live tickets pulled from DynamoDB.</p>
+
+    <div class="card">
+      <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+        <label>
+          Status:
+          <select id="statusSelect">
+            <option value="Open" selected>Open</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Waiting">Waiting</option>
+            <option value="Resolved">Resolved</option>
+          </select>
+        </label>
+
+        <button class="btn" id="refreshBtn" type="button">Refresh</button>
+      </div>
+    </div>
+
+    <div style="height: 16px;"></div>
+
+    <div class="card">
+      <h2 style="margin-top:0;">Tickets</h2>
+      <div id="msg" class="subtitle" style="margin-bottom: 12px;"></div>
+      <div id="list"></div>
+    </div>
+
+    <footer>
+      <small><a class="btn secondary" href="index.html">Back to landing</a></small>
+    </footer>
+  </main>
+
+  <script>
+    const API_BASE = "https://vkswgt7b1e.execute-api.us-east-1.amazonaws.com/prod";
+
+    const statusSelect = document.getElementById("statusSelect");
+    const refreshBtn = document.getElementById("refreshBtn");
+    const list = document.getElementById("list");
+    const msg = document.getElementById("msg");
+
+    function escapeHtml(s) {
+      return String(s)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    async function loadTickets() {
+      const status = statusSelect.value;
+      msg.textContent = "Loading…";
+      list.innerHTML = "";
+
+      try {
+        const res = await fetch(`${API_BASE}/tickets?status=${encodeURIComponent(status)}`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        const items = data.items || [];
+
+        msg.textContent = `Found ${items.length} ticket(s) with status "${status}".`;
+
+        if (items.length === 0) {
+          list.innerHTML = "<p class='subtitle'>No tickets.</p>";
+          return;
+        }
+
+        list.innerHTML = items.map(t => `
+          <div class="card" style="margin-bottom:12px;">
+            <h3 style="margin:0 0 6px 0;">${escapeHtml(t.title || "(no title)")}</h3>
+            <p style="margin:0 0 10px 0; color:#9ca3af;">
+              <strong>Status:</strong> ${escapeHtml(t.status)} ·
+              <strong>Priority:</strong> ${escapeHtml(t.priority || "—")} ·
+              <strong>Type:</strong> ${escapeHtml(t.type || "—")}
+            </p>
+            <p style="margin:0; color:#e5e7eb;">${escapeHtml(t.description || "")}</p>
+            <p style="margin:10px 0 0 0; color:#9ca3af;">
+              <small><strong>Ticket:</strong> ${escapeHtml(t.ticketId)} · <strong>Requester:</strong> ${escapeHtml(t.requesterId)} · <strong>Created:</strong> ${escapeHtml(t.createdAt)}</small>
+            </p>
+          </div>
+        `).join("");
+      } catch (e) {
+        console.error(e);
+        msg.textContent = "Failed to load tickets (check CORS/API URL).";
+        list.innerHTML = `<p class="subtitle">${escapeHtml(e.message)}</p>`;
+      }
+    }
+
+    refreshBtn.addEventListener("click", loadTickets);
+    statusSelect.addEventListener("change", loadTickets);
+
+    loadTickets();
+  </script>
+</body>
+</html>

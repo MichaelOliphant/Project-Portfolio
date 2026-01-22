@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Create Ticket</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <main class="container">
+    <h1>Create Ticket</h1>
+    <p class="subtitle" id="typeLine">Ticket type: —</p>
+
+    <div class="card">
+      <form id="ticketForm">
+        <label style="display:block; margin-bottom:12px;">
+          <div style="margin-bottom:6px;">Title</div>
+          <input id="title" type="text" required
+                 style="width:100%; padding:10px; border-radius:8px; border:1px solid #334155; background:#0b1220; color:#e5e7eb;">
+        </label>
+
+        <label style="display:block; margin-bottom:12px;">
+          <div style="margin-bottom:6px;">Description</div>
+          <textarea id="description" rows="5" required
+                    style="width:100%; padding:10px; border-radius:8px; border:1px solid #334155; background:#0b1220; color:#e5e7eb;"></textarea>
+        </label>
+
+        <label style="display:block; margin-bottom:16px;">
+          <div style="margin-bottom:6px;">Priority</div>
+          <select id="priority"
+                  style="width:100%; padding:10px; border-radius:8px; border:1px solid #334155; background:#0b1220; color:#e5e7eb;">
+            <option value="Low">Low</option>
+            <option value="Medium" selected>Medium</option>
+            <option value="High">High</option>
+          </select>
+        </label>
+
+        <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+          <button class="btn" type="submit" id="submitBtn">Submit Ticket</button>
+          <a class="btn secondary" href="requester.html">Back</a>
+          <span class="subtitle" id="msg" style="margin:0;"></span>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <script>
+    const API_BASE = "https://vkswgt7b1e.execute-api.us-east-1.amazonaws.com/prod";
+
+    // Read ticket type from URL: create-ticket.html?type=Technical%20Issue
+    const params = new URLSearchParams(window.location.search);
+    const type = params.get("type") || "General Inquiry";
+    document.getElementById("typeLine").textContent = `Ticket type: ${type}`;
+
+    const form = document.getElementById("ticketForm");
+    const msg = document.getElementById("msg");
+    const submitBtn = document.getElementById("submitBtn");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      msg.textContent = "";
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Submitting…";
+
+      const payload = {
+        title: document.getElementById("title").value.trim(),
+        description: document.getElementById("description").value.trim(),
+        type,
+        priority: document.getElementById("priority").value,
+        requesterId: "demo-user"
+      };
+
+      try {
+        const res = await fetch(`${API_BASE}/tickets`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data?.message || `HTTP ${res.status}`);
+
+   msg.style.color = "#34d399"; // green
+msg.textContent = `Thanks! Your ticket was submitted successfully.`;
+
+form.querySelectorAll("input, textarea, select, button").forEach(el => {
+  el.disabled = true;
+});
+
+
+        // optional: keep type line + reset priority to Medium
+        document.getElementById("priority").value = "Medium";
+      } catch (err) {
+        console.error(err);
+        msg.textContent = `Error: ${err.message}`;
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Submit Ticket";
+      }
+    });
+  </script>
+</body>
+</html>
